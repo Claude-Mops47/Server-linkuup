@@ -2,10 +2,12 @@ import User from "../models/User.js";
 import Appointment from "../models/Appointment.js";
 
 const addAppointment = async (req, res) => {
+  const userId = req.headers['user-id']
+  
   try {
     const newAppointment = await Appointment.create({
-      UserId: req.user.id, // `UserId` should be `_id`
-      dateProg: req.body.dateProg,
+      userId: userId, // `UserId` should be `_id`
+      date: req.body.date,
       name: req.body.name,
       phone: req.body.phone,
       address: req.body.address,
@@ -15,9 +17,8 @@ const addAppointment = async (req, res) => {
       newAppointment
     });
   } catch (error) {
-    console.log("OOP", error);
     res.status(400).json({
-      msg: "ERROR ADD"
+      message: "ERROR ADD"
     });
   }
 };
@@ -27,19 +28,17 @@ const getAllAppointment = async (req, res) => {
     const appointments = await Appointment.find().populate("posted_by");
     res.status(200).json( appointments );
   } catch (error) {
-    console.log(error);
-    res.status(400).json({ msg: "ERROR GET ALL" });
+    res.status(400).json({ message: "ERROR GET ALL" });
   }
 };
 
 const getAppointmentByUserId = async (req, res) => {
   try {
-    const userId = req.params.userId;
-    const appointments = await Appointment.find({ UserId: userId });
+    const userId = req.params.id;
+    const appointments = await Appointment.find({ userId }).populate('posted_by');
     res.status(200).json( appointments );
   } catch (error) {
-    console.log(error);
-    res.status(400).json({ msg: "ERROR GET BY USER ID" });
+    res.status(400).json({ message: "ERROR GET BY USER ID" });
   }
 };
 
@@ -49,7 +48,7 @@ const updateAppointment = async (req, res) => {
     const updatedAppointment = await Appointment.findByIdAndUpdate(
       appointmentId,
       {
-        dateProg: req.body.dateProg,
+        date: req.body.date,
         name: req.body.name,
         phone: req.body.phone,
         address: req.body.address,
@@ -59,8 +58,7 @@ const updateAppointment = async (req, res) => {
     );
     res.status(200).json( updatedAppointment );
   } catch (error) {
-    console.log(error);
-    res.status(400).json({ msg: "ERROR UPDATE" });
+    res.status(400).json({ message: "ERROR UPDATE" });
   }
 };
 
@@ -68,10 +66,9 @@ const deleteAppointment = async (req, res) => {
   try {
     const appointmentId = req.params.id;
     await Appointment.findByIdAndDelete(appointmentId);
-    res.status(200).json({ msg: "Appointment deleted successfully" });
+    res.status(200).json({ message: "Appointment deleted successfully" });
   } catch (error) {
-    console.log(error);
-    res.status(400).json({ msg: "ERROR DELETE" });
+    res.status(400).json({ message: "ERROR DELETE" });
   }
 };
 

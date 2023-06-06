@@ -5,10 +5,10 @@ import verifyAuth  from '../middleware/verifyAuth.js'
 const router = express.Router()
 
 router.route('/authenticate').post(login)
-router.route('/users/add-user').post(addUser)
-router.route('/users').get(verifyAuth, getAllUsers)
-router.route('/users/:id').get(verifyAuth,getUserById)
-router.route('/users/:id').put(verifyAuth,updateUserById)
-router.route('/users/:id').delete(verifyAuth,deleteUserById)
+router.route('/add-user').post(addUser)
+router.route('/').get(verifyAuth, getAllUsers)
+router.route('/:id').get(verifyAuth,getUserById)
+router.route('/:id').put(verifyAuth,updateUserById)
+router.route('/:id').delete(verifyAuth,deleteUserById)
 
 export default router

@@ -12,7 +12,6 @@ import connectDB from "./db/connect.js";
 import authRoute from "./routes/authRoute.js";
 import appointmentRoute from "./routes/appointmentRoute.js";
 import commentRoute from "./routes/commentRoute.js";
-import cookieRoute from "./routes/cookieRoute.js";
 
 // morgan
 import morgan from "morgan";
@@ -26,27 +25,23 @@ import cors from "cors";
 
 app.use(express.json());
 app.use(cors());
+
 app.get("/", (req, res) => {
-  res.send("Welcome");
-});
-app.get("/api/back", (req, res) => {
-  res.json({ msg: "Here" });
+  res.json({ message: "Here" });
 });
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-
   next();
 });
-// app.use(reteLimiterMiddleware)
-import cookieParser from "cookie-parser";
 
-app.use(cookieParser());
-
-app.use("/api/cookies", cookieRoute);
-app.use("/auth", authRoute);
-app.use("/appointmets", appointmentRoute);
+app.use("/users", authRoute);
+app.use("/appointments", appointmentRoute);
 app.use("/comments", commentRoute);
+
+app.use("*", (req, res) => {
+  res.status(404).json({ message: "not found" });
+});
 
 const port = process.env.PORT || 5004;
 
