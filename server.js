@@ -45,8 +45,8 @@ app.use(cookieParser());
 
 app.use("/api/cookies", cookieRoute);
 app.use("/auth", authRoute);
-app.use("/api/appoint", appointmentRoute);
-app.use("/api/comment", commentRoute);
+app.use("/appointmets", appointmentRoute);
+app.use("/comments", commentRoute);
 
 const port = process.env.PORT || 5004;
 

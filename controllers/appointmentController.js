@@ -25,7 +25,7 @@ const addAppointment = async (req, res) => {
 const getAllAppointment = async (req, res) => {
   try {
     const appointments = await Appointment.find().populate("posted_by");
-    res.status(200).json({ appointments });
+    res.status(200).json( appointments );
   } catch (error) {
     console.log(error);
     res.status(400).json({ msg: "ERROR GET ALL" });
@@ -36,7 +36,7 @@ const getAppointmentByUserId = async (req, res) => {
   try {
     const userId = req.params.userId;
     const appointments = await Appointment.find({ UserId: userId });
-    res.status(200).json({ appointments });
+    res.status(200).json( appointments );
   } catch (error) {
     console.log(error);
     res.status(400).json({ msg: "ERROR GET BY USER ID" });
@@ -57,7 +57,7 @@ const updateAppointment = async (req, res) => {
       },
       { new: true }
     );
-    res.status(200).json({ updatedAppointment });
+    res.status(200).json( updatedAppointment );
   } catch (error) {
     console.log(error);
     res.status(400).json({ msg: "ERROR UPDATE" });
