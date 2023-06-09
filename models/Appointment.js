@@ -24,7 +24,7 @@ const AppointmentSchema = new mongoose.Schema(
     },
     createdAt: {
       type: Date,
-      default: new Date(),
+      default: Date.now,
     },
   },
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
