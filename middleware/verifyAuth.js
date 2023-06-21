@@ -30,23 +30,57 @@
 
 
 
+// import jwt from "jsonwebtoken";
+// import Joi from "joi";
+
+// const verifyAuthSchema = Joi.object({
+//   authorization: Joi.string().required(),
+// }).unknown();
+
+// const customUnauthorizedError = (message) => {
+//   return res.status(401).json({message});
+// };
+
+// const verifyAuth = (req, res, next) => {
+//   try {
+//     const { error, value } = verifyAuthSchema.validate(req.headers);
+//     if (error) {
+//       throw Boom.badRequest(error.message);
+//     }
+//     const token = value.authorization.slice(7);
+//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+//     req.user = decoded;
+//     next();
+//   } catch (err) {
+//     console.log("ERR", err.name);
+//     if (err.name === "JsonWebTokenError") {
+//       throw customUnauthorizedError("Invalid token");
+//     }
+//     if (err.name === "TokenExpiredError") {
+//       throw customUnauthorizedError("Token expired");
+//     }
+//     throw err;
+//   }
+// };
+
+// export default verifyAuth;
+
 import jwt from "jsonwebtoken";
-// import Boom from '@hapi/boom';
 import Joi from "joi";
 
 const verifyAuthSchema = Joi.object({
   authorization: Joi.string().required(),
 }).unknown();
 
-const customUnauthorizedError = (message) => {
-  return new Error(message, 'CustomUnauthorized');
+const customUnauthorizedError = (res, message) => {
+  return res.status(401).json({ message });
 };
 
 const verifyAuth = (req, res, next) => {
   try {
     const { error, value } = verifyAuthSchema.validate(req.headers);
     if (error) {
-      throw Boom.badRequest(error.message);
+      throw new Error(error.message);
     }
     const token = value.authorization.slice(7);
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -55,10 +89,10 @@ const verifyAuth = (req, res, next) => {
   } catch (err) {
     console.log("ERR", err.name);
     if (err.name === "JsonWebTokenError") {
-      throw customUnauthorizedError("Invalid token");
+      return customUnauthorizedError(res, "Invalid token");
     }
     if (err.name === "TokenExpiredError") {
-      throw customUnauthorizedError("Token expired");
+      return customUnauthorizedError(res, "Token expired");
     }
     throw err;
   }
