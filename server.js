@@ -5,7 +5,8 @@ import express from "express";
 import connectDB from "./db/connect.js";
 import authRoute from "./routes/authRoute.js";
 import appointmentRoute from "./routes/appointmentRoute.js";
-import session from 'express-session'
+import session from "express-session";
+import parseurl from "parseurl";
 
 const app = express();
 dotenv.config();
@@ -23,12 +24,31 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(session({
-  secret: 'secret',
-  resave: false,
-  saveUninitialized:false,
-  cookie: {maxAge: 3600000 }
-}))
+app.use(
+  session({
+    secret: "secret",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { maxAge: 3600000 },
+  })
+);
+app.use(function (req, res, next) {
+  if (!req.session.views) {
+    req.session.views = {};
+  }
+  var pathname = parseurl(req).pathname;
+
+  req.session.views[pathname] = (req.session.views[pathname] || 0) + 1;
+  next();
+});
+
+app.get("/foo", function (req, res, next) {
+  res.send("you viewed this page " + req.session.views["/foo"] + " times");
+});
+
+app.get("/bar", function (req, res, next) {
+  res.send("you viewed this page " + req.session.views["/bar"] + " times");
+});
 
 app.use("/users", authRoute);
 app.use("/appointments", appointmentRoute);
