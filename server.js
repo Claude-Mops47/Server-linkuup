@@ -37,7 +37,6 @@ app.use(function (req, res, next) {
     req.session.views = {};
   }
   var pathname = parseurl(req).pathname;
-
   req.session.views[pathname] = (req.session.views[pathname] || 0) + 1;
   next();
 });
