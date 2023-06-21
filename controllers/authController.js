@@ -60,11 +60,9 @@ const login = async (req, res) => {
     if (!isCorrect) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
-
     req.session.user = user;
     const token = user.createJWT();
     user.password = undefined;
-    res.cookie("jwt", token, { maxAge: 3600000 });
     res.status(200).json({ user, token });
   } catch (error) {
     res.status(500).json({ message: error.message });
