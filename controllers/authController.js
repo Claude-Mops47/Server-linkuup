@@ -1,5 +1,5 @@
 import User from "../models/User.js";
-
+import Boom from "@hapi/boom";
 import Joi from "joi";
 
 const addUserSchema = Joi.object({
@@ -92,20 +92,63 @@ const getAllUsers = async (req, res) => {
 };
 
 // getUserById
+// const getUserById = async (req, res) => {
+//   try {
+//     // const userId = parseInt(req.params.id)
+//     const user = await User.findById(req.params.id);
+//     if (!user) {
+//       return res.status(404).json({ message: "User not found" });
+//     }
+//     if (
+//       req.session.user.role !== "Admin" &&
+//       req.session.user._id !== user._id
+//     ) {
+//       return res.status(403).json({
+//         message: "You are not authorized to access this resource",
+//       });
+//     }
+//     res.status(200).json({
+//       id: user._id,
+//       email: user.email,
+//       firstName: user.firstName,
+//       lastName: user.lastName,
+//       role: user.role,
+//     });
+//   } catch (error) {
+//     if (error.code === 404) {
+//       res.status(404).json({
+//         message: "User not found",
+//       });
+//     } else {
+//       res.status(500).json({
+//         message: "Server error",
+//       });
+//     }
+//   }
+// };
+
+
+
+
+const getUserByIdSchema = Joi.object({
+  id: Joi.string().required(),
+}).unknown();
+
 const getUserById = async (req, res) => {
   try {
-    // const userId = parseInt(req.params.id)
-    const user = await User.findById(req.params.id);
+    const { error, value } = getUserByIdSchema.validate(req.params);
+    if (error) {
+      throw Boom.badRequest(error.message);
+    }
+    const user = await User.findById(value.id);
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      throw Boom.notFound("User not found");
     }
     if (
       req.session.user.role !== "Admin" &&
-      req.session.user._id !== user._id
+      req.session.user._id !== user._id.toString()
     ) {
-      return res.status(403).json({
-        message: "You are not authorized to access this resource",
-      });
+      throw Boom.forbidden("You are not authorized to access this resource");
     }
     res.status(200).json({
       id: user._id,
@@ -114,10 +157,10 @@ const getUserById = async (req, res) => {
       lastName: user.lastName,
       role: user.role,
     });
-  } catch (error) {
-    if (error.code === 404) {
-      res.status(404).json({
-        message: "User not found",
+  } catch (err) {
+    if (err.isBoom) {
+      res.status(err.output.statusCode).json({
+        message: err.output.payload.message,
       });
     } else {
       res.status(500).json({
