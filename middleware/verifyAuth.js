@@ -31,7 +31,7 @@
 
 
 import jwt from "jsonwebtoken";
-import Boom from '@hapi/boom';
+// import Boom from '@hapi/boom';
 import Joi from "joi";
 
 const verifyAuthSchema = Joi.object({
@@ -39,7 +39,7 @@ const verifyAuthSchema = Joi.object({
 }).unknown();
 
 const customUnauthorizedError = (message) => {
-  return Boom.unauthorized(message, 'CustomUnauthorized');
+  return new Error(message, 'CustomUnauthorized');
 };
 
 const verifyAuth = (req, res, next) => {
