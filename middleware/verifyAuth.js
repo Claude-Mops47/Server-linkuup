@@ -84,8 +84,8 @@ const verifyAuth = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (err) {
-    console.log("ERR", err);
     if (err.name === "JsonWebTokenError") {
+      console.log("ERR", err.name);
       throw customUnauthorizedError("Invalid token");
     }
     if (err.name === "TokenExpiredError") {
