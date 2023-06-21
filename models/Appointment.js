@@ -22,6 +22,16 @@ const AppointmentSchema = new mongoose.Schema(
     commercial: {
       type: String,
     },
+    comment: {
+      type: String,
+    },
+    status: {
+      type: String,
+    },
+    version: {
+      type: Number,
+      default: 0,
+    },
     createdAt: {
       type: Date,
       default: Date.now,
@@ -30,6 +40,11 @@ const AppointmentSchema = new mongoose.Schema(
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
+AppointmentSchema.pre("save", function (next) {
+  this.version += 1;
+  next();
+});
+
 AppointmentSchema.virtual("posted_by", {
   ref: "user",
   localField: "userId",
@@ -37,11 +52,5 @@ AppointmentSchema.virtual("posted_by", {
   justOne: true,
 });
 
-AppointmentSchema.virtual("comments", {
-  ref: "comment",
-  localField: "_id",
-  foreignField: "appointmentId",
-  justOne: false,
-});
 
 export default mongoose.model("appointment", AppointmentSchema);

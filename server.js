@@ -4,7 +4,6 @@ import morgan from "morgan";
 import express from "express";
 import connectDB from "./db/connect.js";
 import authRoute from "./routes/authRoute.js";
-import commentRoute from "./routes/commentRoute.js";
 import appointmentRoute from "./routes/appointmentRoute.js";
 import session from 'express-session'
 
@@ -33,7 +32,6 @@ app.use(session({
 
 app.use("/users", authRoute);
 app.use("/appointments", appointmentRoute);
-app.use("/comments", commentRoute);
 app.get("/", (req, res) => {
   res.json({ message: "Here" });
 });

@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import Appointment from "../models/Appointment.js";
+import { generateVersion } from "../middleware/utils.js";
 
 const addAppointment = async (req, res) => {
   const userId = req.headers["user-id"];
@@ -16,7 +17,11 @@ const addAppointment = async (req, res) => {
       phone: req.body.phone,
       address: req.body.address,
       commercial: req.body.commercial,
+      comment: req.body.comment,
     });
+    const appointments = await Appointment.find().populate("posted_by");
+    const appointmentsVersion = generateVersion(appointments);
+    res.setHeader("ETag", appointmentsVersion);
     res.status(201).json({
       newAppointment,
     });
@@ -30,6 +35,8 @@ const addAppointment = async (req, res) => {
 const getAllAppointment = async (req, res) => {
   try {
     const appointments = await Appointment.find().populate("posted_by");
+    const appointmentsVersion = generateVersion(appointments);
+    res.setHeader("ETag", appointmentsVersion);
     res.status(200).json(appointments);
   } catch (error) {
     res.status(400).json({ message: "ERROR GET ALL" });
@@ -42,6 +49,9 @@ const getAppointmentByUserId = async (req, res) => {
     const appointments = await Appointment.find({ userId }).populate(
       "posted_by"
     );
+    // const appointments = await Appointment.find().populate('posted_by');
+    const appointmentsVersion = generateVersion(appointments);
+    res.setHeader("ETag", appointmentsVersion);
     res.status(200).json(appointments);
   } catch (error) {
     res.status(400).json({ message: "ERROR GET BY USER ID" });
@@ -53,7 +63,9 @@ const getAppointmentById = async (req, res) => {
     const appointment = await Appointment.findById(req.params.id).populate(
       "posted_by"
     );
-
+    const appointments = await Appointment.find().populate("posted_by");
+    const appointmentsVersion = generateVersion(appointments);
+    res.setHeader("ETag", appointmentsVersion);
     res.status(200).json(appointment);
   } catch (error) {
     res.status(400).json({ message: "ERROR GET BY ID" });
@@ -75,9 +87,14 @@ const updateAppointment = async (req, res) => {
         phone: req.body.phone,
         address: req.body.address,
         commercial: req.body.commercial,
+        comment: req.body.comment,
+        status: req.body.status,
       },
       { new: true }
     );
+    const appointments = await Appointment.find().populate("posted_by");
+    const appointmentsVersion = generateVersion(appointments);
+    res.setHeader("ETag", appointmentsVersion);
     res.status(200).json(updatedAppointment);
   } catch (error) {
     res.status(400).json({ message: "ERROR UPDATE" });
@@ -92,6 +109,9 @@ const deleteAppointment = async (req, res) => {
       res.status(404).json({ message: "Appointment not found" });
     }
     await Appointment.findByIdAndDelete(appointmentId);
+    const appointments = await Appointment.find().populate("posted_by");
+    const appointmentsVersion = generateVersion(appointments);
+    res.setHeader("ETag", appointmentsVersion);
     res.status(200).json({ message: "Appointment deleted successfully" });
   } catch (error) {
     res.status(400).json({ message: "ERROR DELETE" });
