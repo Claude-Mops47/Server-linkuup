@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import { ObjectId } from "mongoose";
 import Boom from "@hapi/boom";
 import Joi from "joi";
 
@@ -18,11 +19,6 @@ const addUser = async (req, res) => {
       return res.status(400).json({ message: error.details[0].message });
     }
     const { firstName, lastName, email, password, role } = req.body;
-    // // Validate the input.
-    // if (!firstName || !lastName || !email || !role || !password) {
-    //   res.status(400).json({ message: "Pease provide all required fiels." });
-    //   return;
-    // }
     // Check if the email address already exists.
     const existingUser = await User.findOne({ email });
     // If the email address already exists, return an error.
@@ -60,7 +56,7 @@ const login = async (req, res) => {
     if (!isCorrect) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
-    req.session.user = user;
+    req.session.userId = user._id.toString();
     const token = user.createJWT();
     user.password = undefined;
     res.status(200).json({ user, token });
@@ -127,6 +123,19 @@ const getAllUsers = async (req, res) => {
 //   }
 // };
 
+// Get current user
+const getCurrentUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.session.userId);
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
+    }
+    res.status(200).json({ user });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 
 
 
@@ -139,7 +148,7 @@ const getUserById = async (req, res) => {
     const { error, value } = getUserByIdSchema.validate(req.params);
     if (error) {
       throw Boom.badRequest(error.message);
-    }
+    } 
     const user = await User.findById(value.id);
     if (!user) {
       throw Boom.notFound("User not found");
@@ -208,4 +217,5 @@ export {
   getUserById,
   updateUserById,
   deleteUserById,
+  getCurrentUser
 };
