@@ -67,6 +67,7 @@ const getAppointmentById = async (req, res) => {
     const appointmentsVersion = generateVersion(appointments);
     res.setHeader("ETag", appointmentsVersion);
     res.status(200).json(appointment);
+    console.log(appointmentsVersion);
   } catch (error) {
     res.status(400).json({ message: "ERROR GET BY ID" });
   }
