@@ -29,40 +29,9 @@
 // export default verifyAuth;
 
 
-// import jwt from "jsonwebtoken";
-// import Boom from '@hapi/boom';
-// import Joi from "joi";
-
-// const verifyAuthSchema = Joi.object({
-//   authorization: Joi.string().required(),
-// }).unknown();
-
-// const verifyAuth = (req, res, next) => {
-//   try {
-//     const { error, value } = verifyAuthSchema.validate(req.headers);
-//     if (error) {
-//       throw Boom.badRequest(error.message);
-//     }
-//     const token = value.authorization.slice(7);
-//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-//     req.user = decoded;
-//     next();
-//   } catch (err) {
-//     if (err.name === "JsonWebTokenError") {
-//       throw Boom.unauthorized("Invalid token");
-//     }
-//     if (err.name === "TokenExpiredError") {
-//       throw Boom.unauthorized("Token expired");
-//     }
-//     throw err;
-//   }
-// };
-
-// export default verifyAuth;
-
 
 import jwt from "jsonwebtoken";
-import Boom from '@hapi/boom';
+import Boom from 'boom';
 import Joi from "joi";
 
 const verifyAuthSchema = Joi.object({
