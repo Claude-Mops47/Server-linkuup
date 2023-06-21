@@ -1,43 +1,42 @@
-import express from "express";
-const app = express();
-
-// dotenv
+import cors from "cors";
 import dotenv from "dotenv";
+import morgan from "morgan";
+import express from "express";
+import connectDB from "./db/connect.js";
+import authRoute from "./routes/authRoute.js";
+import commentRoute from "./routes/commentRoute.js";
+import appointmentRoute from "./routes/appointmentRoute.js";
+import session from 'express-session'
+
+const app = express();
 dotenv.config();
 
-//db
-import connectDB from "./db/connect.js";
-
-// routes
-import authRoute from "./routes/authRoute.js";
-import appointmentRoute from "./routes/appointmentRoute.js";
-import commentRoute from "./routes/commentRoute.js";
-
-// morgan
-import morgan from "morgan";
 if (process.env.NODE_ENV !== "production") {
   app.use(morgan("dev"));
 }
 
-// middleware
-import cors from "cors";
-// import reteLimiterMiddleware from './middleware/rateLimiter.js'
-
 app.use(express.json());
 app.use(cors());
 
-app.get("/", (req, res) => {
-  res.json({ message: "Here" });
-});
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   next();
 });
 
+app.use(session({
+  secret: 'secret',
+  resave: false,
+  saveUninitialized:false,
+  cookie: {maxAge: 3600000 }
+}))
+
 app.use("/users", authRoute);
 app.use("/appointments", appointmentRoute);
 app.use("/comments", commentRoute);
+app.get("/", (req, res) => {
+  res.json({ message: "Here" });
+});
 
 app.use("*", (req, res) => {
   res.status(404).json({ message: "not found" });
@@ -53,7 +52,6 @@ const start = async () => {
     console.log("DATABASE CONNECTION ERROR", error);
     process.exit(1);
   }
-
   app.listen(port, () => {
     console.log(`SERVER RUNNING ON PORT: ${port}`);
   });

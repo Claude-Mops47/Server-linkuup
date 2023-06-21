@@ -1,15 +1,28 @@
 import User from "../models/User.js";
 
+import Joi from "joi";
+
+const addUserSchema = Joi.object({
+  firstName: Joi.string().required(),
+  lastName: Joi.string().required(),
+  email: Joi.string().email().required(),
+  password: Joi.string().required(),
+  role: Joi.string().valid("user", "admin").required(),
+});
+
 // add-user
 const addUser = async (req, res) => {
   try {
-    const { firstName, lastName, email, password, role } = req.body;
-
-    // Validate the input.
-    if (!firstName || !lastName || !email || !role || !password) {
-      res.status(400).json({ message: "Pease provide all required fiels." });
-      return;
+    const { error } = addUserSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ message: error.details[0].message });
     }
+    const { firstName, lastName, email, password, role } = req.body;
+    // // Validate the input.
+    // if (!firstName || !lastName || !email || !role || !password) {
+    //   res.status(400).json({ message: "Pease provide all required fiels." });
+    //   return;
+    // }
     // Check if the email address already exists.
     const existingUser = await User.findOne({ email });
     // If the email address already exists, return an error.
@@ -35,28 +48,23 @@ const addUser = async (req, res) => {
 // login
 const login = async (req, res) => {
   const { email, password } = req.body;
-
   if (!email || !password) {
     return res.status(400).json({ message: "Please provide all values" });
   }
-
   try {
     const user = await User.findOne({ email }).select("+password");
-
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
-
     const isCorrect = await user.comparePassword(password);
-
     if (!isCorrect) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
+    req.session.user = user;
     const token = user.createJWT();
     user.password = undefined;
     res.cookie("jwt", token, { maxAge: 3600000 });
-
     res.status(200).json({ user, token });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -90,6 +98,17 @@ const getUserById = async (req, res) => {
   try {
     // const userId = parseInt(req.params.id)
     const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (
+      req.session.user.role !== "Admin" &&
+      req.session.user._id !== user._id
+    ) {
+      return res.status(403).json({
+        message: "You are not authorized to access this resource",
+      });
+    }
     res.status(200).json({
       id: user._id,
       email: user.email,
@@ -114,38 +133,38 @@ const updateUserById = async (req, res) => {
   try {
     const userId = req.params.id;
     const updates = req.body;
-
     const updateUser = await User.findByIdAndUpdate(userId, updates, {
       new: true,
     });
-
     if (updateUser) {
-      res.status(200).json({message:"User update successfully"});
+      res.status(200).json({ message: "User update successfully" });
     } else {
       res.status(404).json({ message: "User not found" });
     }
-
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }
 };
 
-const deleteUserById = async (req, res)=>{
+const deleteUserById = async (req, res) => {
   try {
     const userId = req.params.id;
-
-    const deleteUser = await User.findByIdAndDelete(userId)
-
-    if(deleteUser){
-      res.status(200).json({message:"User delete successfully"})
-    }
-    else{
-      res.status(404).json({message: "User not found"})
+    const deleteUser = await User.findByIdAndDelete(userId);
+    if (deleteUser) {
+      res.status(200).json({ message: "User delete successfully" });
+    } else {
+      res.status(404).json({ message: "User not found" });
     }
   } catch (error) {
-    res.status(500).json({message:"Server error"})
-    
+    res.status(500).json({ message: "Server error" });
   }
-}
+};
 
-export { addUser, login, getAllUsers, getUserById, updateUserById, deleteUserById };
+export {
+  addUser,
+  login,
+  getAllUsers,
+  getUserById,
+  updateUserById,
+  deleteUserById,
+};
