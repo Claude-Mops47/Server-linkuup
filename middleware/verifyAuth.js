@@ -31,7 +31,7 @@
 
 
 import jwt from "jsonwebtoken";
-import Boom from 'boom';
+import Boom from '@hapi/boom';
 import Joi from "joi";
 
 const verifyAuthSchema = Joi.object({
