@@ -49,8 +49,8 @@ const getAppointmentByUserId = async (req, res) => {
     const appointments = await Appointment.find({ userId }).populate(
       "posted_by"
     );
-    // const appointments = await Appointment.find().populate('posted_by');
-    const appointmentsVersion = generateVersion(appointments);
+    const appointmentsETag = await Appointment.find().populate('posted_by');
+    const appointmentsVersion = generateVersion(appointmentsETag);
     res.setHeader("ETag", appointmentsVersion);
     res.status(200).json(appointments);
   } catch (error) {
@@ -67,7 +67,6 @@ const getAppointmentById = async (req, res) => {
     const appointmentsVersion = generateVersion(appointments);
     res.setHeader("ETag", appointmentsVersion);
     res.status(200).json(appointment);
-    console.log(appointmentsVersion);
   } catch (error) {
     res.status(400).json({ message: "ERROR GET BY ID" });
   }
