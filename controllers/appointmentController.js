@@ -60,10 +60,10 @@ const addAppointment = async (req, res) => {
 //     res.status(400).json({ message: "ERROR GET ALL" });
 //   }
 // };
+
 const getAllAppointment = async (req, res) => {
   try {
     let appointments;
-    const currentDate = new Date();
 
     if (req.query.date) {
       const date = new Date(req.query.date);
@@ -74,12 +74,6 @@ const getAllAppointment = async (req, res) => {
       }).populate("posted_by");
     } else {
       appointments = await Appointment.find().populate("posted_by");
-      if (currentDate) {
-        const currentAppointments = await Appointment.find({
-          createdAt: { $gte: currentDate, $lt: new Date(currentDate.getTime() + 86400000) }, // Filtrer pour les rendez-vous de la journée
-        }).populate("posted_by");
-        appointments = appointments.concat(currentAppointments);
-      }
     }
 
     res.status(200).json(appointments);
