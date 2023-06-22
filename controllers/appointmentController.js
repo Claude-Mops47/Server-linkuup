@@ -55,7 +55,8 @@ const getAllAppointment = async (req, res) => {
 
 const getAppointmentByUserId = async (req, res) => {
   try {
-    const userId = req.params.id;
+    const userId = req.headers["user-id"];
+    // const userId = req.params.id;
     const appointments = await Appointment.find({ userId }).populate(
       "posted_by"
     );
