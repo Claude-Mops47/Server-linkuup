@@ -76,7 +76,7 @@ const getAllAppointment = async (req, res) => {
       appointments = await Appointment.find().populate("posted_by");
       if (currentDate) {
         const currentAppointments = await Appointment.find({
-          date: { $eq: currentDate },
+          createdAt: { $gte: currentDate, $lt: new Date(currentDate.getTime() + 86400000) }, // Filtrer pour les rendez-vous de la journée
         }).populate("posted_by");
         appointments = appointments.concat(currentAppointments);
       }
@@ -87,6 +87,7 @@ const getAllAppointment = async (req, res) => {
     res.status(400).json({ message: "ERROR GET ALL" });
   }
 };
+
 
 
 
