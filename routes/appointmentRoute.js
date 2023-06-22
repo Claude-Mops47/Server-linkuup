@@ -13,7 +13,7 @@ import { setETagHeader } from "../middleware/utils.js";
 const router = express.Router();
 
 router.route("/add-new").post(verifyAuth, addAppointment);
-router.route("/").get(verifyAuth, setETagHeader, getAllAppointment);
+router.route("/").get(verifyAuth, getAllAppointment);
 
 router
   .route("/user/:id")
