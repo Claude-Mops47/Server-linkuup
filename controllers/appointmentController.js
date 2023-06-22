@@ -63,26 +63,25 @@ const addAppointment = async (req, res) => {
 
 const getAllAppointment = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const date = req.query.date;
-    const skip = (page - 1) * limit;
-    let query = await Appointment.find().populate("posted_by");
-    if (date) {
-      const startDate = new Date(date);
-      const endDate = new Date(date);
-      endDate.setDate(endDate.getDate() + 1);
-      query = query.where("createdAt").gte(startDate).lt(endDate);
+    let appointments;
+    const currentDate = new Date();
+
+    if (req.query.date) {
+      const date = new Date(req.query.date);
+      appointments = await Appointment.find({
+        createdAt: { $eq: date  },
+      }).populate("posted_by");
+    } else {
+      appointments = await Appointment.find().populate("posted_by");
+      if (currentDate) {
+        const currentAppointments = await Appointment.find({
+          date: { $eq: currentDate },
+        }).populate("posted_by");
+        appointments = appointments.concat(currentAppointments);
+      }
     }
-    const appointments = await query.skip(skip).limit(limit);
-    const totalAppointments = await Appointment.countDocuments();
-    const totalPages = Math.ceil(totalAppointments / limit);
-    res.status(200).json({
-      appointments,
-      currentPage: page,
-      totalPages,
-      totalAppointments,
-    });
+
+    res.status(200).json(appointments);
   } catch (error) {
     res.status(400).json({ message: "ERROR GET ALL" });
   }
