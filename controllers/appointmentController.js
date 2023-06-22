@@ -106,10 +106,11 @@ const updateAppointment = async (req, res) => {
 const deleteAppointment = async (req, res) => {
   try {
     const appointmentId = req.params.id;
-    const appointment = await Appointment.findById(appointmentId);
-    if (!appointment) {
-      return res.status(404).json({ message: "Appointment not found" });
-    }
+
+    // const appointment = await Appointment.findById(appointmentId);
+    // if (!appointment) {
+    //   return res.status(404).json({ message: "Appointment not found" });
+    // }
     await Appointment.findByIdAndDelete(appointmentId);
     res.status(200).json({ message: "Appointment deleted successfully" });
   } catch (error) {
