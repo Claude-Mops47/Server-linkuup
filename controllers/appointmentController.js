@@ -67,7 +67,7 @@ const getAllAppointment = async (req, res) => {
     const currentDate = new Date();
 
     if (req.query.date) {
-      const date = new Date(req.query.date);
+      // const date = new Date(req.query.date);
       appointments = await Appointment.find({
         createdAt: { $eq: date  },
       }).populate("posted_by");
