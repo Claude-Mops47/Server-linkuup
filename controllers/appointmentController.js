@@ -65,29 +65,18 @@ const getAllAppointment = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
-    const date = req.query.date; // Récupère le paramètre de requête 'date'
-
+    const date = req.query.date;
     const skip = (page - 1) * limit;
-
     let query = await Appointment.find().populate("posted_by");
-
-    // Si le paramètre 'date' est fourni, ajoute une condition de filtrage sur 'createdAt'
     if (date) {
-      // Convertit la date en objets Date de JavaScript pour obtenir la plage complète de la journée
       const startDate = new Date(date);
       const endDate = new Date(date);
       endDate.setDate(endDate.getDate() + 1);
-
-      // Ajoute la condition de filtrage pour 'createdAt'
       query = query.where("createdAt").gte(startDate).lt(endDate);
     }
-
-    const totalAppointments = await query.countDocuments();
-    const totalPages = Math.ceil(totalAppointments / limit);
-
     const appointments = await query.skip(skip).limit(limit);
-    // await setETagHeader(req, res, ()=>{})
-
+    const totalAppointments = await Appointment.countDocuments();
+    const totalPages = Math.ceil(totalAppointments / limit);
     res.status(200).json({
       appointments,
       currentPage: page,
