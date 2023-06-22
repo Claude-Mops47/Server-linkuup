@@ -40,7 +40,7 @@ const addAppointment = async (req, res) => {
       commercial: req.body.commercial,
       comment: req.body.comment,
     });
-    await setETagHeader(req, res, ()=>{})
+    // await setETagHeader(req, res, ()=>{})
     res.status(201).json({
       newAppointment,
     });
@@ -86,7 +86,7 @@ const getAllAppointment = async (req, res) => {
     const totalPages = Math.ceil(totalAppointments / limit);
 
     const appointments = await query.skip(skip).limit(limit);
-    await setETagHeader(req, res, ()=>{})
+    // await setETagHeader(req, res, ()=>{})
 
     res.status(200).json({
       appointments,
@@ -106,7 +106,7 @@ const getAppointmentByUserId = async (req, res) => {
     const appointments = await Appointment.find({ userId }).populate(
       "posted_by"
     );
-    await setETagHeader(req, res, ()=>{})
+    // await setETagHeader(req, res, ()=>{})
     res.status(200).json(appointments);
   } catch (error) {
     res.status(400).json({ message: "ERROR GET BY USER ID" });
@@ -118,7 +118,7 @@ const getAppointmentById = async (req, res) => {
     const appointment = await Appointment.findById(req.params.id).populate(
       "posted_by"
     );
-    await setETagHeader(req, res, ()=>{})
+    // await setETagHeader(req, res, ()=>{})
     res.status(200).json(appointment);
   } catch (error) {
     res.status(400).json({ message: "ERROR GET BY ID" });
@@ -145,7 +145,7 @@ const updateAppointment = async (req, res) => {
       },
       { new: true }
     );
-    await setETagHeader(req, res, ()=>{})
+    // await setETagHeader(req, res, ()=>{})
     res.status(200).json(updatedAppointment);
   } catch (error) {
     res.status(400).json({ message: "ERROR UPDATE" });
@@ -160,7 +160,7 @@ const deleteAppointment = async (req, res) => {
       res.status(404).json({ message: "Appointment not found" });
     }
     await Appointment.findByIdAndDelete(appointmentId);
-    await setETagHeader(req, res, ()=>{})
+    // await setETagHeader(req, res, ()=>{})
     res.status(200).json({ message: "Appointment deleted successfully" });
   } catch (error) {
     res.status(400).json({ message: "ERROR DELETE" });
