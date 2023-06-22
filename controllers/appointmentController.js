@@ -69,7 +69,7 @@ const getAllAppointment = async (req, res) => {
 
     const skip = (page - 1) * limit;
 
-    let query = Appointment.find().populate("posted_by");
+    let query = await Appointment.find().populate("posted_by");
 
     // Si le paramètre 'date' est fourni, ajoute une condition de filtrage sur 'createdAt'
     if (date) {
