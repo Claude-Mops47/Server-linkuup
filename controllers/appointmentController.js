@@ -60,7 +60,6 @@ const addAppointment = async (req, res) => {
 //     res.status(400).json({ message: "ERROR GET ALL" });
 //   }
 // };
-
 const getAllAppointment = async (req, res) => {
   try {
     let appointments;
@@ -68,8 +67,10 @@ const getAllAppointment = async (req, res) => {
 
     if (req.query.date) {
       const date = new Date(req.query.date);
+      const startDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      const endDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
       appointments = await Appointment.find({
-        date: { $eq: date  },
+        createdAt: { $gte: startDate, $lt: endDate },
       }).populate("posted_by");
     } else {
       appointments = await Appointment.find().populate("posted_by");
@@ -86,6 +87,7 @@ const getAllAppointment = async (req, res) => {
     res.status(400).json({ message: "ERROR GET ALL" });
   }
 };
+
 
 
 const getAppointmentByUserId = async (req, res) => {
