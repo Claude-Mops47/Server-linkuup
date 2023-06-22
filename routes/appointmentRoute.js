@@ -20,7 +20,7 @@ router
   .get(verifyAuth, setETagHeader, getAppointmentByUserId);
 
 router.route("/:id").get(verifyAuth, setETagHeader, getAppointmentById);
-router.route("/:id").put(verifyAuth, setETagHeader, updateAppointment);
-router.route("/:id").delete(verifyAuth, setETagHeader, deleteAppointment);
+router.route("/:id").put(verifyAuth, updateAppointment);
+router.route("/:id").delete(verifyAuth, deleteAppointment);
 
 export default router;
