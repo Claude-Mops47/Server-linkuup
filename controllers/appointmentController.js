@@ -43,7 +43,8 @@ const getAllAppointment = async (req, res) => {
         createdAt: { $gte: startDate, $lt: endDate },
       }).populate("posted_by");
     } else {
-      appointments = await getAllAppointments();
+      appointments = await Appointment.find().populate("posted_by");
+      ;
     }
 
     res.status(200).json(appointments);
