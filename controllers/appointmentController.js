@@ -44,7 +44,6 @@ const getAllAppointment = async (req, res) => {
       }).populate("posted_by");
     } else {
       appointments = await Appointment.find().populate("posted_by");
-      ;
     }
 
     res.status(200).json(appointments);
@@ -56,7 +55,6 @@ const getAllAppointment = async (req, res) => {
 const getAppointmentByUserId = async (req, res) => {
   try {
     const userId = req.headers["user-id"];
-    // const userId = req.params.id;
     const appointments = await Appointment.find({ userId }).populate(
       "posted_by"
     );
@@ -106,11 +104,10 @@ const updateAppointment = async (req, res) => {
 const deleteAppointment = async (req, res) => {
   try {
     const appointmentId = req.params.id;
-
-    // const appointment = await Appointment.findById(appointmentId);
-    // if (!appointment) {
-    //   return res.status(404).json({ message: "Appointment not found" });
-    // }
+    const appointment = await Appointment.findById(appointmentId);
+    if (!appointment) {
+      return res.status(404).json({ message: "Appointment not found" });
+    }
     await Appointment.findByIdAndDelete(appointmentId);
     res.status(200).json({ message: "Appointment deleted successfully" });
   } catch (error) {
