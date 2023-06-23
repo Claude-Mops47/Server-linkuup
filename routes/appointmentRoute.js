@@ -8,7 +8,6 @@ import {
   updateAppointment,
 } from "../controllers/appointmentController.js";
 import verifyAuth from "../middleware/verifyAuth.js";
-// import { setETagHeader } from "../middleware/utils.js";
 
 const router = express.Router();
 
