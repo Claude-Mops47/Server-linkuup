@@ -8,7 +8,7 @@ export const cacheMiddlewar = (req,res, next)=>{
     }else{
         res.sendResponse  = res.send;
         res.send = (body)=>{
-            cache.put(key, body, durationInSeconds * 1000)
+            // cache.put(key, body, durationInSeconds * 1000)
             res.sendResponse(body)
         }
         next()
