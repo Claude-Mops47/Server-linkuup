@@ -34,8 +34,9 @@ app.use(
   })
 );
 
-app.use("/users",cacheMiddleware, authRoute);
-app.use("/appointments",cacheMiddleware, appointmentRoute);
+app.use(cacheMiddleware)
+app.use("/users", authRoute);
+app.use("/appointments", appointmentRoute);
 
 app.get("/", (req, res) => {
   res.json({ message: "Here" });
