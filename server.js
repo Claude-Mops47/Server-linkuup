@@ -6,7 +6,7 @@ import connectDB from "./db/connect.js";
 import authRoute from "./routes/authRoute.js";
 import appointmentRoute from "./routes/appointmentRoute.js";
 import session from "express-session";
-import { cacheMiddlewar } from "./middleware/cacheMiddlewar.js";
+import { cacheMiddleware } from "./middleware/cacheMiddlewar.js";
 
 const app = express();
 dotenv.config();
@@ -34,8 +34,8 @@ app.use(
   })
 );
 
-app.use("/users",cacheMiddlewar, authRoute);
-app.use("/appointments",cacheMiddlewar, appointmentRoute);
+app.use("/users",cacheMiddleware, authRoute);
+app.use("/appointments",cacheMiddleware, appointmentRoute);
 
 app.get("/", (req, res) => {
   res.json({ message: "Here" });
