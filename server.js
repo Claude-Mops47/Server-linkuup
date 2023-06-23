@@ -6,6 +6,7 @@ import connectDB from "./db/connect.js";
 import authRoute from "./routes/authRoute.js";
 import appointmentRoute from "./routes/appointmentRoute.js";
 import session from "express-session";
+import helmet from "helmet";
 import { cacheMiddleware } from "./middleware/cacheMiddlewar.js";
 
 const app = express();
@@ -16,8 +17,10 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+
+app.use(helmet());
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -27,14 +30,15 @@ app.use((req, res, next) => {
 
 app.use(
   session({
-    secret: "secret",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    cookie: { maxAge: 3600000 },
+    cookie: { maxAge: process.env.SESSION_MAX_AGE },
   })
 );
 
-app.use(cacheMiddleware)
+app.use(cacheMiddleware);
+
 app.use("/users", authRoute);
 app.use("/appointments", appointmentRoute);
 
