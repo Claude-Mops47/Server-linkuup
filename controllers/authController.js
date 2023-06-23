@@ -48,7 +48,7 @@ const login = async (req, res) => {
     return res.status(400).json({ message: "Please provide all values" });
   }
   try {
-    const user = await User.findOne({ email }).select("+password");
+    const user = await User.findOne({ email }).select("+password").exec();
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
@@ -68,7 +68,7 @@ const login = async (req, res) => {
 // getAllUsers
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find();
+    const users = await User.find().exec();
 
     if (users.length === 0) {
       return res.status(204).end();

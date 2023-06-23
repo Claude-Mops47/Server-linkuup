@@ -4,7 +4,7 @@ import validator from "validator";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-const UserSchema = new mongoose.Schema(
+const userSchema = new mongoose.Schema(
   {
     firstName: {
       type: String,
@@ -22,12 +22,13 @@ const UserSchema = new mongoose.Schema(
       unique: true,
       validate: {
         validator: validator.isEmail,
-        message: "Please provide a valid email address",
+        message: props =>`${props.value} is not a valid email address`
       },
     },
     role: {
       type: String,
       required: true,
+      enum:['Admin','User','Manager']
     },
     password: {
       type: String,
@@ -46,27 +47,27 @@ const UserSchema = new mongoose.Schema(
   }
 );
 
-UserSchema.pre("save", async function () {
+userSchema.pre("save", async function () {
   const salt = await bcryptjs.genSalt(10);
   this.password = await bcryptjs.hash(this.password, salt);
 });
 
-UserSchema.methods.createJWT = function () {
+userSchema.methods.createJWT = function () {
   return jwt.sign({ userId: this._id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_LIFETIME,
   }); 
 };
 
-UserSchema.methods.comparePassword = async function (candidate) {
+userSchema.methods.comparePassword = async function (candidate) {
   const isMatch = await bcryptjs.compare(candidate, this.password);
   return isMatch;
 };
 
-UserSchema.virtual("appointments", {
-  ref: "appointment",
+userSchema.virtual("appointments", {
+  ref: "Appointment",
   localField: "_id",
   foreignField: "userId",
   justOne: false,
 });
 
-export default mongoose.model("user", UserSchema);
+export default mongoose.model("User", userSchema);

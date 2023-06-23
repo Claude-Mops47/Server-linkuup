@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 
-const AppointmentSchema = new mongoose.Schema(
+const appointmentSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "user",
+      ref: "User",
       required: true,
     },
     date: {
@@ -27,6 +27,7 @@ const AppointmentSchema = new mongoose.Schema(
     },
     status: {
       type: String,
+      enum:['pending', 'confirmed','completed'], default:'pending'
     },
     version: {
       type: Number,
@@ -40,17 +41,17 @@ const AppointmentSchema = new mongoose.Schema(
   { toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
-AppointmentSchema.pre("save", function (next) {
+appointmentSchema.pre("save", function (next) {
   this.version += 1;
   next();
 });
 
-AppointmentSchema.virtual("posted_by", {
-  ref: "user",
+appointmentSchema.virtual("posted_by", {
+  ref: "User",
   localField: "userId",
   foreignField: "_id",
   justOne: true,
 });
 
 
-export default mongoose.model("appointment", AppointmentSchema);
+export default mongoose.model("Appointment", appointmentSchema);

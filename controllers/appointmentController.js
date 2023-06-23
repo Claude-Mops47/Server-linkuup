@@ -41,7 +41,7 @@ const getAllAppointment = async (req, res) => {
       );
       appointments = await Appointment.find({
         createdAt: { $gte: startDate, $lt: endDate },
-      }).populate("posted_by");
+      }).populate("posted_by").exec();
     } else {
       appointments = await Appointment.find().populate("posted_by");
     }
@@ -57,7 +57,7 @@ const getAppointmentByUserId = async (req, res) => {
     const userId = req.headers["user-id"];
     const appointments = await Appointment.find({ userId }).populate(
       "posted_by"
-    );
+    ).exec();
     res.status(200).json(appointments);
   } catch (error) {
     res.status(400).json({ message: "ERROR GET BY USER ID" });
@@ -68,7 +68,7 @@ const getAppointmentById = async (req, res) => {
   try {
     const appointment = await Appointment.findById(req.params.id).populate(
       "posted_by"
-    );
+    ).exec();
     res.status(200).json(appointment);
   } catch (error) {
     res.status(400).json({ message: "ERROR GET BY ID" });
@@ -94,7 +94,7 @@ const updateAppointment = async (req, res) => {
         status: req.body.status,
       },
       { new: true }
-    );
+    ).exec();
     res.status(200).json(updatedAppointment);
   } catch (error) {
     res.status(400).json({ message: "ERROR UPDATE" });
@@ -104,11 +104,11 @@ const updateAppointment = async (req, res) => {
 const deleteAppointment = async (req, res) => {
   try {
     const appointmentId = req.params.id;
-    const appointment = await Appointment.findById(appointmentId);
+    const appointment = await Appointment.findById(appointmentId).exec();
     if (!appointment) {
       return res.status(404).json({ message: "Appointment not found" });
     }
-    await Appointment.findByIdAndDelete(appointmentId);
+    await Appointment.findByIdAndDelete(appointmentId).exec();
     res.status(200).json({ message: "Appointment deleted successfully" });
   } catch (error) {
     res.status(400).json({ message: "ERROR DELETE" });

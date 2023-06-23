@@ -6,7 +6,7 @@ import connectDB from "./db/connect.js";
 import authRoute from "./routes/authRoute.js";
 import appointmentRoute from "./routes/appointmentRoute.js";
 import session from "express-session";
-import parseurl from "parseurl";
+import { cacheMiddlewar } from "./middleware/cacheMiddlewar.js";
 
 const app = express();
 dotenv.config();
@@ -16,6 +16,7 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 app.use(express.json());
+app.use(express.urlencoded({extended: true}));
 app.use(cors());
 
 app.use((req, res, next) => {
@@ -32,25 +33,10 @@ app.use(
     cookie: { maxAge: 3600000 },
   })
 );
-app.use(function (req, res, next) {
-  if (!req.session.views) {
-    req.session.views = {};
-  }
-  var pathname = parseurl(req).pathname;
-  req.session.views[pathname] = (req.session.views[pathname] || 0) + 1;
-  next();
-});
 
-app.get("/foo", function (req, res, next) {
-  res.send("you viewed this page " + req.session.views["/foo"] + " times");
-});
+app.use("/users",cacheMiddlewar, authRoute);
+app.use("/appointments",cacheMiddlewar, appointmentRoute);
 
-app.get("/bar", function (req, res, next) {
-  res.send("you viewed this page " + req.session.views["/bar"] + " times");
-});
-
-app.use("/users", authRoute);
-app.use("/appointments", appointmentRoute);
 app.get("/", (req, res) => {
   res.json({ message: "Here" });
 });
