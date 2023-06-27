@@ -11,10 +11,10 @@ const customUnauthorizedError = (res, message) => {
 
 const verifyAuth = (req, res, next) => {
   try {
-    const { error, value } = verifyAuthSchema.validate(req.headers);
-    if (error) {
-      throw new Error(error.message);
-    }
+    // const { error, value } = verifyAuthSchema.validate(req.headers);
+    // if (error) {
+    //   throw new Error(error.message);
+    // }
     const token = value.authorization.slice(7);
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
