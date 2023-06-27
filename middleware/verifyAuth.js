@@ -21,10 +21,12 @@ const verifyAuth = (req, res, next) => {
     next();
   } catch (err) {
     if (err.name === "JsonWebTokenError") {
-      return customUnauthorizedError(res, "Invalid token");
+      return res.status(401).json({message: "Invalid token"});
+      // return customUnauthorizedError(res, "Invalid token");
     }
     if (err.name === "TokenExpiredError") {
-      return customUnauthorizedError(res, "Token expired");
+      return res.status(401).json({message: "Token expired"});
+      // return customUnauthorizedError(res, "Token expired");
     }
     throw err;
   }
