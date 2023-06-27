@@ -2,7 +2,8 @@ import express from "express";
 import {
   addAppointment,
   deleteAppointment,
-  getAllAppointment,
+  // getAllAppointment,
+  getAllAppointments,
   getAppointmentById,
   getAppointmentByUserId,
   updateAppointment,
@@ -12,7 +13,7 @@ import verifyAuth from "../middleware/verifyAuth.js";
 const router = express.Router();
 
 router.route("/add-new").post(verifyAuth, addAppointment);
-router.route("/").get(verifyAuth, getAllAppointment);
+router.route("/").get(verifyAuth, getAllAppointments);
 
 router.route("/user/:id").get(verifyAuth, getAppointmentByUserId);
 

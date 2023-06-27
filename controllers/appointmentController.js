@@ -146,7 +146,7 @@ const deleteAppointment = async (req, res) => {
 
 export {
   addAppointment,
-  getAllAppointment,
+  getAllAppointments,
   getAppointmentById,
   getAppointmentByUserId,
   updateAppointment,
