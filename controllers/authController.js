@@ -8,7 +8,7 @@ const addUserSchema = Joi.object({
   lastName: Joi.string().required(),
   email: Joi.string().email().required(),
   password: Joi.string().required(),
-  role: Joi.string().valid("user", "admin").required(),
+  role: Joi.string().valid("User", "Admin", "Manager").required(),
 });
 
 // add-user
