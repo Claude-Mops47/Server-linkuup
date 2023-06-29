@@ -8,6 +8,7 @@ import appointmentRoute from "./routes/appointmentRoute.js";
 import session from "express-session";
 import helmet from "helmet";
 import { cacheMiddleware } from "./middleware/cacheMiddlewar.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
 dotenv.config();
@@ -19,6 +20,7 @@ if (process.env.NODE_ENV !== "production") {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+app.use(cookieParser)
 
 // app.use(helmet());
 
