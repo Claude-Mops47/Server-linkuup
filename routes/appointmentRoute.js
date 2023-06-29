@@ -12,7 +12,7 @@ import verifyAuth from "../middleware/verifyAuth.js";
 
 const router = express.Router();
 
-router.route("/add-new").post(verifyAuth, addAppointment);
+router.route("/:id/add-new").post(verifyAuth, addAppointment);
 router.route("/").get(verifyAuth, getAllAppointments);
 
 router.route("/user/:id").get(verifyAuth, getAppointmentByUserId);
