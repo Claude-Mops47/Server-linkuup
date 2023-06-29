@@ -136,11 +136,43 @@ const getAllAppointments = async (req, res) => {
 
 const getAppointmentByUserId = async (req, res) => {
   try {
-    // const userId = req.headers["user-id"];
     const userId = req.params.id;
-    const appointments = await Appointment.find({ userId }).populate(
-      "posted_by"
-    ).exec();
+    let appointments;
+    let query = {};
+
+    if (req.query.date) {
+      const date = new Date(req.query.date);
+      const startDate = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate()
+      );
+      const endDate = new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate() + 1
+      );
+      query.createdAt = { $gte: startDate, $lt: endDate };
+    }
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    if (!req.query.page && !req.query.limit && !req.query.date) {
+      // Aucun paramètre de requête n'a été fourni, retourne la liste globale
+      appointments = await Appointment.find({ userId })
+        .populate("posted_by")
+        .exec();
+    } else {
+      // Un ou plusieurs paramètres de requête ont été fournis, utilise la requête avec les filtres appropriés
+      appointments = await Appointment.find({userId, query})
+        .populate("posted_by")
+        .skip(skip)
+        .limit(limit)
+        .exec();
+    }
+
     res.status(200).json(appointments);
   } catch (error) {
     res.status(400).json({ message: "ERROR GET BY USER ID" });
