@@ -60,7 +60,7 @@ const login = async (req, res) => {
     const token = user.createJWT();
     user.password = undefined;
     res.status(200).json({ user, token });
-    res.cookie('authUser', user)
+    res.cookie('token', token)
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
