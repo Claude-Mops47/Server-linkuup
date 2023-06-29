@@ -166,7 +166,7 @@ const getAppointmentByUserId = async (req, res) => {
         .exec();
     } else {
       // Un ou plusieurs paramètres de requête ont été fournis, utilise la requête avec les filtres appropriés
-      appointments = await Appointment.find({userId})
+      appointments = await Appointment.find({userId}, query)
         .populate("posted_by")
         .skip(skip)
         .limit(limit)
