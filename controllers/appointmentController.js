@@ -2,7 +2,8 @@ import User from "../models/User.js";
 import Appointment from "../models/Appointment.js";
 
 const addAppointment = async (req, res) => {
-  const userId = req.headers["user-id"];
+  // const userId = req.headers["user-id"];
+  const userId = req.params.id;
   try {
     const user = await User.findById(userId);
     if (!user) {
@@ -135,7 +136,8 @@ const getAllAppointments = async (req, res) => {
 
 const getAppointmentByUserId = async (req, res) => {
   try {
-    const userId = req.headers["user-id"];
+    // const userId = req.headers["user-id"];
+    const userId = req.params.id;
     const appointments = await Appointment.find({ userId }).populate(
       "posted_by"
     ).exec();
