@@ -5,7 +5,7 @@ import verifyAuth  from '../middleware/verifyAuth.js'
 const router = express.Router()
 
 router.route('/authenticate').post(login)
-router.route('/add-user').post(addUser)
+router.route('/:id/add-user').post(addUser)
 router.route('/').get(verifyAuth, getAllUsers)
 router.route('/:id').get(verifyAuth,getUserById)
 router.route('/current').get(verifyAuth,getCurrentUser)
