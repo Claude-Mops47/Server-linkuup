@@ -114,9 +114,7 @@ const getAllAppointments = async (req, res) => {
 
     if (!req.query.page && !req.query.limit && !req.query.date) {
       // Aucun paramètre de requête n'a été fourni, retourne la liste globale
-      appointments = await Appointment.find()
-        .populate("posted_by")
-        .exec();
+      appointments = await Appointment.find().populate("posted_by").exec();
     } else {
       // Un ou plusieurs paramètres de requête ont été fournis, utilise la requête avec les filtres appropriés
       appointments = await Appointment.find(query)
@@ -128,31 +126,29 @@ const getAllAppointments = async (req, res) => {
 
     res.status(200).json(appointments);
   } catch (error) {
-    res.status(400).json({ message: "Erreur lors de la récupération des rendez-vous." });
+    res
+      .status(400)
+      .json({ message: "Erreur lors de la récupération des rendez-vous." });
   }
 };
-
-
 
 const getAppointmentByUserId = async (req, res) => {
   try {
     const userId = req.params.id;
     let appointments;
-    let query = {};
+    const date = req.query.date; // Récupère la date du paramètre de requête
 
-    if (req.query.date) {
-      const date = new Date(req.query.date);
-      const startDate = new Date(
-        date.getFullYear(),
-        date.getMonth(),
-        date.getDate()
-      );
-      const endDate = new Date(
-        date.getFullYear(),
-        date.getMonth(),
-        date.getDate() + 1
-      );
-      query.createdAt = { $gte: startDate, $lt: endDate };
+    let query = {};
+    if (date) {
+      const startDate = new Date(date);
+      const endDate = new Date(date);
+      endDate.setDate(endDate.getDate() + 1);
+      query = {
+        userId,
+        createdAt: { $gte: startDate, $lt: endDate }
+      };
+    } else {
+      query = { userId };
     }
 
     const page = parseInt(req.query.page) || 1;
@@ -166,7 +162,7 @@ const getAppointmentByUserId = async (req, res) => {
         .exec();
     } else {
       // Un ou plusieurs paramètres de requête ont été fournis, utilise la requête avec les filtres appropriés
-      appointments = await Appointment.find({query: query , userId :userId})
+      appointments = await Appointment.find(query)
         .populate("posted_by")
         .skip(skip)
         .limit(limit)
@@ -179,11 +175,12 @@ const getAppointmentByUserId = async (req, res) => {
   }
 };
 
+
 const getAppointmentById = async (req, res) => {
   try {
-    const appointment = await Appointment.findById(req.params.id).populate(
-      "posted_by"
-    ).exec();
+    const appointment = await Appointment.findById(req.params.id)
+      .populate("posted_by")
+      .exec();
     res.status(200).json(appointment);
   } catch (error) {
     res.status(400).json({ message: "ERROR GET BY ID" });
