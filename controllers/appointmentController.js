@@ -1,6 +1,5 @@
 import User from "../models/User.js";
 import Appointment from "../models/Appointment.js";
-import cacheController from 'express-cache-controller';
 
 
 const addAppointment = async (req, res) => {
@@ -20,7 +19,6 @@ const addAppointment = async (req, res) => {
       commercial: req.body.commercial,
       comment: req.body.comment,
     });
-    cacheController.invalidate(userId)
     res.status(201).json({ newAppointment });
   } catch (error) {
     res.status(400).json({ message: "ERROR ADD" });
