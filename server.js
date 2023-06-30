@@ -39,7 +39,7 @@ app.use(
   })
 );
 
-// app.use(cacheMiddleware);
+app.use(cacheMiddleware);
 
 app.use("/users", authRoute);
 app.use("/appointments", appointmentRoute);
