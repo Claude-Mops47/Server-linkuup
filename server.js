@@ -8,7 +8,7 @@ import appointmentRoute from "./routes/appointmentRoute.js";
 import session from "express-session";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
-import cacheController from 'express-cache-controller'
+import cacheController from 'express-cache-controller';
 
 const app = express();
 dotenv.config();
@@ -21,7 +21,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(cookieParser('secret_key'))
-app.use(cacheController())
+app.use(cacheController());
 
 app.use(helmet());
 
