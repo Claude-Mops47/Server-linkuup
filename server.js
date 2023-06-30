@@ -7,8 +7,8 @@ import authRoute from "./routes/authRoute.js";
 import appointmentRoute from "./routes/appointmentRoute.js";
 import session from "express-session";
 import helmet from "helmet";
-import { cacheMiddleware } from "./middleware/cacheMiddlewar.js";
 import cookieParser from "cookie-parser";
+import cacheController from 'express-cache-controller'
 
 const app = express();
 dotenv.config();
@@ -21,6 +21,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(cookieParser('secret_key'))
+app.use(cacheController())
 
 app.use(helmet());
 
@@ -39,7 +40,6 @@ app.use(
   })
 );
 
-// app.use(cacheMiddleware);
 
 app.use("/users", authRoute);
 app.use("/appointments", appointmentRoute);
