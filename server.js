@@ -51,6 +51,10 @@ app.get("/", (req, res) => {
 app.use("*", (req, res) => {
   res.status(404).json({ message: "Route not found" });
 });
+app.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).send('Erreur interne du serveur');
+});
 
 const port = process.env.PORT || 5004;
 
