@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 app.use(cookieParser())
 
-// app.use(helmet());
+app.use(helmet());
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -39,7 +39,7 @@ app.use(
   })
 );
 
-app.use(cacheMiddleware);
+// app.use(cacheMiddleware);
 
 app.use("/users", authRoute);
 app.use("/appointments", appointmentRoute);
