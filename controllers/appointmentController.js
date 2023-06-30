@@ -59,6 +59,7 @@ const getAllAppointments = async (req, res) => {
         .limit(limit)
         .exec();
     }
+    res.set('Cache-Control','max-age=3600')
 
     res.status(200).json(appointments);
   } catch (error) {
@@ -105,6 +106,7 @@ const getAppointmentByUserId = async (req, res) => {
         .exec();
     }
 
+    res.set('Cache-Control','max-age=3600')
     res.status(200).json(appointments);
   } catch (error) {
     res.status(400).json({ message: "ERROR GET BY USER ID" });
