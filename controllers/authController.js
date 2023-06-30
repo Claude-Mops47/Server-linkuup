@@ -59,8 +59,8 @@ const login = async (req, res) => {
     req.session.userId = user._id.toString();
     const token = user.createJWT();
     user.password = undefined;
-    res.Cookie('authToken', token,{httpOnly: true})
     res.status(200).json({ user, token });
+    res.cookie('authToken', token,{httpOnly: true})
     // res.cookie('token', token)
   } catch (error) {
     res.status(500).json({ message: error.message });
