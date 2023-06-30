@@ -53,7 +53,7 @@ app.use("*", (req, res) => {
 });
 app.use((err, req, res, next) => {
   console.error(err);
-  res.status(500).send('Erreur interne du serveur');
+  res.status(500).json({message:'Erreur interne du serveur'});
 });
 
 const port = process.env.PORT || 5004;
