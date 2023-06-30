@@ -59,13 +59,17 @@ const login = async (req, res) => {
     req.session.userId = user._id.toString();
     const token = user.createJWT();
     user.password = undefined;
+    res.Cookie('authToken', token,{httpOnly: true})
     res.status(200).json({ user, token });
     // res.cookie('token', token)
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
-
+const logout = async (req,res)=>{
+  res.clearCookie('authToken');
+  res.json({message:'Déconnexion réussie'})
+}
 // getAllUsers
 const getAllUsers = async (req, res) => {
   try {
@@ -176,6 +180,7 @@ const deleteUserById = async (req, res) => {
 export {
   addUser,
   login,
+  logout,
   getAllUsers,
   getUserById,
   updateUserById,
