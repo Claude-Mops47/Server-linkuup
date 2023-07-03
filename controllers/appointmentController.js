@@ -25,55 +25,95 @@ const addAppointment = async (req, res) => {
   }
 };
 
+// const getAllAppointments = async (req, res) => {
+//   try {
+//     let appointments;
+//     let query = {};
+
+
+//     if (req.query.date) {
+//       const date = new Date(req.query.date);
+//       const startDate = new Date(
+//         date.getFullYear(),
+//         date.getMonth(),
+//         date.getDate()
+//       );
+//       const endDate = new Date(
+//         date.getFullYear(),
+//         date.getMonth(),
+//         date.getDate() + 1
+//       );
+
+//       query.createdAt = { $gte: startDate, $lt: endDate };
+//     }
+
+//     const startDate = req.query.startDate;
+//     const endDate = req.query.endDate;
+
+//     const page = parseInt(req.query.page) || 1;
+//     const limit = parseInt(req.query.limit) || 10;
+//     const skip = (page - 1) * limit;
+    
+//     query.createdAt = { $gte: startDate, $lt: endDate };
+
+//     if (!req.query.page && !req.query.limit && !req.query.date) {
+//       // Aucun paramètre de requête n'a été fourni, retourne la liste globale
+//       appointments = await Appointment.find().populate("posted_by").exec();
+//     } else {
+//       // Un ou plusieurs paramètres de requête ont été fournis, utilise la requête avec les filtres appropriés
+//       appointments = await Appointment.find(query)
+//         .populate("posted_by")
+//         .skip(skip)
+//         .limit(limit)
+//         .exec();
+//     }
+//     res.set('Cache-Control','public, stale-while-revalidate=3600')
+
+//     res.status(200).json(appointments);
+//   } catch (error) {
+//     res
+//       .status(400)
+//       .json({ message: "Erreur lors de la récupération des rendez-vous." });
+//   }
+// };
+
 const getAllAppointments = async (req, res) => {
   try {
-    let appointments;
     let query = {};
+    const { startDate, endDate, page, limit, date } = req.query;
 
+    if (date) {
+      const parsedDate = new Date(date);
+      const startOfDay = new Date(parsedDate.getFullYear(), parsedDate.getMonth(), parsedDate.getDate());
+      const endOfDay = new Date(parsedDate.getFullYear(), parsedDate.getMonth(), parsedDate.getDate() + 1);
 
-    if (req.query.date) {
-      const date = new Date(req.query.date);
-      const startDate = new Date(
-        date.getFullYear(),
-        date.getMonth(),
-        date.getDate()
-      );
-      const endDate = new Date(
-        date.getFullYear(),
-        date.getMonth(),
-        date.getDate() + 1
-      );
-
+      query.createdAt = { $gte: startOfDay, $lt: endOfDay };
+    } else if (startDate && endDate) {
       query.createdAt = { $gte: startDate, $lt: endDate };
     }
 
-    const startDate = req.query.startDate;
-    const endDate = req.query.endDate;
-    
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
-    
-    query.createdAt = { $gte: startDate, $lt: endDate };
+    const pageNum = parseInt(page) || 1;
+    const pageSize = parseInt(limit) || 10;
+    const skip = (pageNum - 1) * pageSize;
 
-    if (!req.query.page && !req.query.limit && !req.query.date) {
+    let appointments;
+
+    if (!page && !limit && !date) {
       // Aucun paramètre de requête n'a été fourni, retourne la liste globale
-      appointments = await Appointment.find().populate("posted_by").exec();
+      appointments = await Appointment.find(query).populate("posted_by").exec();
     } else {
       // Un ou plusieurs paramètres de requête ont été fournis, utilise la requête avec les filtres appropriés
       appointments = await Appointment.find(query)
         .populate("posted_by")
         .skip(skip)
-        .limit(limit)
+        .limit(pageSize)
         .exec();
     }
-    res.set('Cache-Control','public, stale-while-revalidate=3600')
 
+    res.set('Cache-Control', 'public, stale-while-revalidate=3600');
     res.status(200).json(appointments);
   } catch (error) {
-    res
-      .status(400)
-      .json({ message: "Erreur lors de la récupération des rendez-vous." });
+    res.status(400).json({ message: "Erreur lors de la récupération des rendez-vous." });
   }
 };
 
