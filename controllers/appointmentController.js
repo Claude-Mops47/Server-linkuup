@@ -30,6 +30,7 @@ const getAllAppointments = async (req, res) => {
     let appointments;
     let query = {};
 
+
     if (req.query.date) {
       const date = new Date(req.query.date);
       const startDate = new Date(
@@ -42,12 +43,18 @@ const getAllAppointments = async (req, res) => {
         date.getMonth(),
         date.getDate() + 1
       );
+
       query.createdAt = { $gte: startDate, $lt: endDate };
     }
 
+    const startDate = req.query.startDate;
+    const endDate = req.query.endDate;
+    
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
+    
+    query.createdAt = { $gte: startDate, $lt: endDate };
 
     if (!req.query.page && !req.query.limit && !req.query.date) {
       // Aucun paramètre de requête n'a été fourni, retourne la liste globale
