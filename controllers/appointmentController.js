@@ -80,16 +80,14 @@ const addAppointment = async (req, res) => {
 const getAllAppointments = async (req, res) => {
   try {
     let query = {};
-    const { startDate, endDate, page, limit, date } = req.query;
+    const { startDate, endDate, page, limit } = req.query;
 
-    if (date) {
-      const parsedDate = new Date(date);
-      const startOfDay = new Date(parsedDate.getFullYear(), parsedDate.getMonth(), parsedDate.getDate());
-      const endOfDay = new Date(parsedDate.getFullYear(), parsedDate.getMonth(), parsedDate.getDate() + 1);
+    if (startDate && endDate) {
+      const startOfDay = new Date(startDate);
+      const endOfDay = new Date(endDate);
+      endOfDay.setDate(endOfDay.getDate() + 1);
 
       query.createdAt = { $gte: startOfDay, $lt: endOfDay };
-    } else if (startDate && endDate) {
-      query.createdAt = { $gte: startDate, $lt: endDate };
     }
 
     const pageNum = parseInt(page) || 1;
@@ -98,9 +96,9 @@ const getAllAppointments = async (req, res) => {
 
     let appointments;
 
-    if (!page && !limit && !date) {
+    if (!page && !limit && !startDate && !endDate) {
       // Aucun paramètre de requête n'a été fourni, retourne la liste globale
-      appointments = await Appointment.find(query).populate("posted_by").exec();
+      appointments = await Appointment.find().populate("posted_by").exec();
     } else {
       // Un ou plusieurs paramètres de requête ont été fournis, utilise la requête avec les filtres appropriés
       appointments = await Appointment.find(query)
@@ -116,6 +114,7 @@ const getAllAppointments = async (req, res) => {
     res.status(400).json({ message: "Erreur lors de la récupération des rendez-vous." });
   }
 };
+
 
 const getAppointmentByUserId = async (req, res) => {
   try {
