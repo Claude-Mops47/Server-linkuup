@@ -84,8 +84,8 @@ const logout = async (req,res)=>{
 // refres token
 const refreshAccessToken = (req,res)=>{
   const refreshToken = req.cookie.refreshToken;
-  console.log(refreshToken);
-  
+  console.log('refresh=',refreshToken);
+
   if(!refreshToken){
     return res.status(403).json({message: 'Refresh token missing'})
   }
