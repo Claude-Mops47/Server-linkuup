@@ -127,7 +127,7 @@ const corsOptions = {
   preflightContinue: false,
   optionsSuccessStatus: 204,
   credentials: true,
-  allowedHeaders: "Content-Type,Authorization",
+  allowedHeaders: "Content-Type,Authorization, x-refresh-token",
 };
 
 app.use(cors(corsOptions));
