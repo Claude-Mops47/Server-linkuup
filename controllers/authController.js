@@ -2,6 +2,7 @@ import User from "../models/User.js";
 import { ObjectId } from "mongoose";
 import Boom from "@hapi/boom";
 import Joi from "joi";
+import jwt from "jsonwebtoken";
 
 const addUserSchema = Joi.object({
   firstName: Joi.string().required(),
@@ -57,21 +58,42 @@ const login = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
     req.session.userId = user._id.toString();
+
     const token = user.createJWT();
+    const refresh = user.refreshJWT();
+
     user.password = undefined;
 
     res.cookie('authUser', user,{httpOnly: true})
     res.cookie('authToken', token,{httpOnly: true})
+    res.cookie('refreshToken', refresh,{httpOnly: true})
 
     res.status(200).json({ user, token });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
   
-};
+}; 
+
+// logout
 const logout = async (req,res)=>{
   res.clearCookie('authToken');
+  res.clearCookie('refreshToken');
   res.json({message:'Déconnexion réussie'})
+}
+// refres token
+const refreshAccessToken = (req,res)=>{
+  const refreshToken = req.cookie.refreshToken;
+  if(!refreshToken){
+    return res.status(403).json({message: 'Refresh token missing'})
+  }
+  jwt.verify(refreshToken, process.env.JWT_REFRESH, (err, user)=>{
+    if(err){
+      return res.status(403).json({message:'Invalid refresh token'})
+    }
+    const token = user.createJWT();
+    res.json({ token })
+  })
 }
 // getAllUsers
 const getAllUsers = async (req, res) => {
@@ -188,5 +210,6 @@ export {
   getUserById,
   updateUserById,
   deleteUserById,
-  getCurrentUser
+  getCurrentUser,
+  refreshAccessToken,
 };

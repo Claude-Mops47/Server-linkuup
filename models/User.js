@@ -58,6 +58,11 @@ userSchema.methods.createJWT = function () {
   }); 
 };
 
+userSchema.methods.refreshJWT = function () {
+  return jwt.sign({ userId: this._id }, process.env.JWT_REFRESH); 
+};
+
+
 userSchema.methods.comparePassword = async function (candidate) {
   const isMatch = await bcryptjs.compare(candidate, this.password);
   return isMatch;
