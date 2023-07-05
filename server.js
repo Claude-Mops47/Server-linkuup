@@ -19,7 +19,7 @@ if (process.env.NODE_ENV !== "production") {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({origin:'http://192.168.100.5:3000', credentials:true}));
+app.use(cors({origin:'http://192.168.100.5:5000', credentials:true}));
 app.use(cookieParser())
 app.use(cacheController());
 
@@ -35,12 +35,21 @@ app.use(
     cookie: { maxAge: 3600000 },
   })
 );
-
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  const allowedOrigins = ["http://localhost:3000", "http://192.168.100.5:3000"];
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+  }
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   next();
 });
+
+// app.use((req, res, next) => {
+//   res.setHeader("Access-Control-Allow-Origin", "*");
+//   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+//   next();
+// });
 
 
 app.use("/users", authRoute);
