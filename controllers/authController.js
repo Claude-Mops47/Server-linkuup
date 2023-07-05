@@ -85,7 +85,6 @@ const logout = async (req,res)=>{
 const refreshAccessToken = (req,res)=>{
   // const refreshToken = req.cookie.refreshToken;
   const refreshToken = req.headers["x-refresh-token"];
-  console.log('refresh=',refreshToken);
 
   if(!refreshToken){
     return res.status(403).json({message: 'Refresh token missing'})
@@ -96,6 +95,7 @@ const refreshAccessToken = (req,res)=>{
     }
     const token = user.createJWT();
     res.json({ token })
+    console.log(token);
   })
 }
 // getAllUsers
