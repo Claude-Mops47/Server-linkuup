@@ -68,7 +68,7 @@ const login = async (req, res) => {
     res.cookie('authToken', token,{httpOnly: true})
     res.cookie('refreshToken', refresh,{httpOnly: true})
 
-    res.status(200).json({ user, token });
+    res.status(200).json({ user, token , refresh});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
