@@ -132,6 +132,15 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*"); // Remplacez avec l'URL de votre application front-end
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, x-refresh-token");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  next();
+});
+
+
 app.use("/users", authRoute);
 app.use("/appointments", appointmentRoute);
 
