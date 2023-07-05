@@ -122,7 +122,8 @@ app.use(
 
 // Configuration personnalisée pour CORS
 const corsOptions = {
-  origin: "*",
+  origin:["http://localhost:3000", "http://192.168.100.22:3000"],
+  // origin: "*",
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   preflightContinue: false,
   optionsSuccessStatus: 204,
@@ -132,13 +133,13 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*"); // Remplacez avec l'URL de votre application front-end
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, x-refresh-token");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-  next();
-});
+// app.use((req, res, next) => {
+//   res.setHeader("Access-Control-Allow-Origin", "*"); // Remplacez avec l'URL de votre application front-end
+//   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, x-refresh-token");
+//   res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+//   res.setHeader("Access-Control-Allow-Credentials", "true");
+//   next();
+// });
 
 
 app.use("/users", authRoute);
