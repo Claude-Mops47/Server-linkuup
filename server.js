@@ -122,8 +122,8 @@ app.use(
 
 // Configuration personnalisée pour CORS
 const corsOptions = {
-  origin:["http://localhost:3000", "http://192.168.100.22:3000"],
-  // origin: "*",
+  // origin:["http://localhost:3000", "http://192.168.100.22:3000"],
+  origin: "*",
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   preflightContinue: false,
   optionsSuccessStatus: 204,
