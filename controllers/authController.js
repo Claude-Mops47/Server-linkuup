@@ -84,7 +84,7 @@ const logout = async (req,res)=>{
 // refres token
 const refreshAccessToken = (req,res)=>{
   // const refreshToken = req.cookie.refreshToken;
-  const refreshToken = req.headers['x-refresh-token'];
+  const refreshToken = req.headers["x-refresh-token"];
   console.log('refresh=',refreshToken);
 
   if(!refreshToken){
